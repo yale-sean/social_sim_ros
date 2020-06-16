@@ -9,4 +9,4 @@ uint64      track_id       # Unique ID for each person
 geometry_msgs/Pose      pose
 
 # Velocity of the track
-geometry_msgs/Twis      twist
+geometry_msgs/Twist      twist
