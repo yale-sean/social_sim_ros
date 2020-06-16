@@ -49,9 +49,9 @@
 // ostringstream
 #include <sstream>
 
-const char* WHEEL_NAMES[] = {"left", "right"};
+const char* WHEEL_NAMES[] = {"front_left", "front_right", "rear_left", "rear_right"};
 
-template <unsigned int NUM_JOINTS = 2>
+template <unsigned int NUM_JOINTS = 4>
 class DifferentialDriveSimController : public hardware_interface::RobotHW
 {
 public:
@@ -70,7 +70,7 @@ public:
     for (unsigned int i = 0; i < NUM_JOINTS; ++i)
     {
       std::ostringstream os;
-      os << "wheel_" << WHEEL_NAMES[i] << "_joint";
+      os << WHEEL_NAMES[i] << "_wheel";
 
       hardware_interface::JointStateHandle state_handle(os.str(), &pos_[i], &vel_[i], &eff_[i]);
       jnt_state_interface_.registerHandle(state_handle);

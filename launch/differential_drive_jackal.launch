@@ -21,5 +21,5 @@
   <!-- Spawn controller -->
   <node name="controller_spawner"
         pkg="controller_manager" type="spawner" output="screen"
-        args="jackal_joint_publisher jackal_velocity_controller" />
+        args="jackal_joint_publisher mobile_base_controller" />
 </launch>
