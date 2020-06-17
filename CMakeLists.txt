@@ -6,6 +6,12 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+add_message_files(
+  FILES
+    PersonEntry.msg
+    PersonEntryArray.msg
+)
+
 find_package(catkin REQUIRED COMPONENTS
     controller_interface
     controller_manager

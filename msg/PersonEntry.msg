@@ -1,6 +1,6 @@
 # Message defining an entry of a person
 
-time        stamp          # Age of the track
+Header      header         # Age of the track
 uint64      track_id       # Unique ID for each person
 
 # The following fields are extracted from the Kalman state x and its covariance C
@@ -9,4 +9,4 @@ uint64      track_id       # Unique ID for each person
 geometry_msgs/Pose      pose
 
 # Velocity of the track
-geometry_msgs/Twist      twist
+geometry_msgs/Twist     twist
