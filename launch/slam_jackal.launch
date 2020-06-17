@@ -1,0 +1,16 @@
+<launch>
+  <node name="odom_to_tf" pkg="social_sim_ros" type="odom_to_tf.py" />
+
+  <include file="$(find social_sim_ros)/launch/jackal_description.launch" />
+
+  <include file="$(find social_sim_ros)/launch/differential_drive_jackal.launch" />
+
+  <include file="$(find social_sim_ros)/launch/gmapping_jackal.launch" />
+
+  <include file="$(find social_sim_ros)/launch/differential_drive_teleop.launch" />
+
+  <include file="$(find jackal_viz)/launch/view_robot.launch">
+   <arg name="config" value="gmapping"/>
+  </include>
+
+</launch>
