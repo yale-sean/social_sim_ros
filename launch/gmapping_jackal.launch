@@ -41,7 +41,7 @@
     <!-- Process a scan each time the robot rotates this far  -->
     <param name="angularUpdate" value="0.05"/>
 
-    <param name="temporalUpdate" value="0"/>
+    <param name="temporalUpdate" value="0.1"/>
     <param name="resampleThreshold" value="0.5"/>
 
     <!-- Number of particles in the filter. default 30        -->
