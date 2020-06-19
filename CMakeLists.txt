@@ -10,6 +10,9 @@ add_message_files(
   FILES
     PersonEntry.msg
     PersonEntryArray.msg
+    PoseArray.msg
+    TrialInfo.msg
+    TrialStart.msg
 )
 
 find_package(catkin REQUIRED COMPONENTS
