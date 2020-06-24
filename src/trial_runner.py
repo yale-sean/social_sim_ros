@@ -13,6 +13,8 @@ import csv
 class SocialSimRunner(object):
     def __init__(self):
         rospy.init_node("social_sim_runner")
+        self.prev_info_stamp = 0
+        self.info_stamp = 1
         self.current_trial = 0;
         self.is_trialing = False
         self.trial_ready = False
@@ -23,7 +25,6 @@ class SocialSimRunner(object):
         self.info_sub = rospy.Subscriber("/social_sim/last_info", TrialInfo, self.info_callback, queue_size=10)
 
 
-
         self.num_trials = rospy.get_param('~num_trials')
         print(self.num_trials)
         self.num_peds = rospy.get_param('~num_peds')
@@ -32,8 +33,9 @@ class SocialSimRunner(object):
         print(self.time_limit)
         self.trial_name = rospy.get_param('~trial_name')
         print(self.trial_name)
+        rospy.spin()
 
-        self.csvfile = csv.open(trial_name + '.csv', 'wb')
+        #self.csvfile = csv.open(trial_name + '.csv', 'wb')
 
     def positions_callback(self, positions_msg):
         positions = positions_msg.positions
@@ -46,39 +48,43 @@ class SocialSimRunner(object):
         self.trial_ready = True
 
     def status_callback(self, trial_status_msg):
-        prev_status = self.is_trialing
         self.is_trialing = trial_status_msg.data
-        if prev_status is True and self.is_trialing is False:
+        if self.is_trialing is False \
+        and self.info_stamp != self.prev_info_stamp \
+        and self.trial_ready is True:
             self.record_csv()
             self.run_trial()
-
+            self.prev_info_stamp = self.info_stamp
+        if self.trial_ready is True:
+            self.start_pub.publish(self.trial_start_msg)
+            self.goal_pub.publish(self.goal_msg)
 
     def info_callback(self, trial_info_msg):
         self.trial_info = trial_info_msg
+        self.info_stamp = self.trial_info.header.stamp.secs
 
     def run_trial(self):
         if self.current_trial >= self.num_trials:
             return
-        trial_start_msg = TrialStart()
-        trial_start_msg.spawn = self.spawn_pos
-        trial_start_msg.target = self.target_pos
-        trial_start_msg.num_peds = self.num_peds
-        trial_start_msg.time_limit = self.time_limit
-        goal_msg = MoveBaseGoal()
-        goal_msg.target_pose.pose = self.target_pos
+        self.trial_start_msg = TrialStart()
+        self.trial_start_msg.header.stamp = rospy.Time.now()
+        self.trial_start_msg.spawn = self.spawn_pos
+        self.trial_start_msg.target = self.target_pos
+        self.trial_start_msg.num_peds = self.num_peds
+        self.trial_start_msg.time_limit = self.time_limit
+        self.goal_msg = MoveBaseGoal()
+        self.goal_msg.target_pose.pose = self.target_pos
         self.current_trial += 1
-        self.start_pub.publish(trial_start_msg)
-        self.goal_pub.publish(goal_msg)
 
-    def record_csv():
-        writer = csv.writer(self.csvfile)
-        writer.writerow(self.trial_info)
-
+    def record_csv(self):
+        #writer = csv.writer(self.csvfile)
+        #writer.writerow(self.trial_info)
+        return
 
 
 if __name__ == "__main__":
     try:
         node = SocialSimRunner()
-        node.run_trial()
+        #node.run_trial()
     except rospy.ROSInterruptException:
         pass
