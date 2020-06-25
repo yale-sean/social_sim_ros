@@ -6,7 +6,7 @@ import rospy
 import actionlib
 import tf
 from social_sim_ros.msg import TrialStart, PoseArray, TrialInfo
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseActionGoal
 from std_msgs.msg import Bool
 from random import randint
 import csv
@@ -19,14 +19,15 @@ class SocialSimRunner(object):
         self.current_trial = 0;
         self.is_trialing = False
         self.trial_ready = False
-
         self.positions_sub = rospy.Subscriber("/social_sim/spawn_positions", PoseArray, self.positions_callback, queue_size=10)
         self.start_pub = rospy.Publisher("/social_sim/start_trial", TrialStart, queue_size=10)
+        #self.goal_pub = rospy.Publisher("/move_base/goal", MoveBaseActionGoal, queue_size=10)
         self.status_sub = rospy.Subscriber("/social_sim/is_running", Bool, self.status_callback, queue_size=10)
         self.info_sub = rospy.Subscriber("/social_sim/last_info", TrialInfo, self.info_callback, queue_size=10)
 
         self.move_client = actionlib.SimpleActionClient('move_base',MoveBaseAction)
         self.move_client.wait_for_server()
+
 
         self.num_trials = rospy.get_param('~num_trials')
         print(self.num_trials)
@@ -57,10 +58,13 @@ class SocialSimRunner(object):
         and self.trial_ready is True:
             self.record_csv()
             self.run_trial()
+            self.move_client.send_goal(self.goal)
             self.prev_info_stamp = self.info_stamp
         if self.trial_ready is True:
             self.start_pub.publish(self.trial_start_msg)
-            self.move_client.send_goal(self.goal_msg)
+            #self.goal_pub.publish(self.goal_msg)
+            
+
 
     def info_callback(self, trial_info_msg):
         self.trial_info = trial_info_msg
@@ -75,11 +79,16 @@ class SocialSimRunner(object):
         self.trial_start_msg.target = self.target_pos
         self.trial_start_msg.num_peds = self.num_peds
         self.trial_start_msg.time_limit = self.time_limit
-
-        self.goal_msg = MoveBaseGoal()
-        self.goal_msg.target_pose.header.frame_id = "map"
-        self.goal_msg.target_pose.header.stamp = rospy.Time.now()
-        self.goal_msg.target_pose.pose = self.target_pos
+        '''
+        self.goal_msg = MoveBaseActionGoal()
+        self.goal_msg.header.stamp = rospy.Time.now()
+        self.goal_msg.goal.target_pose.header.stamp = rospy.Time.now()
+        self.goal_msg.goal.target_pose.header.frame_id = "map"
+        '''
+        self.goal = MoveBaseGoal()
+        self.goal.target_pose.header.frame_id = "map"
+        self.goal.target_pose.header.stamp = rospy.Time.now()
+        self.goal.target_pose.pose = self.target_pos
 
         self.current_trial += 1
 
