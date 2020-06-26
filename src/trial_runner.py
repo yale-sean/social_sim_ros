@@ -16,16 +16,17 @@ class SocialSimRunner(object):
         rospy.init_node("social_sim_runner")
         self.prev_info_stamp = 0
         self.info_stamp = 1
-        self.current_trial = 0;
+        self.current_trial = 0
         self.is_trialing = False
         self.trial_ready = False
+        self.info_ready = False
         self.positions_sub = rospy.Subscriber("/social_sim/spawn_positions", PoseArray, self.positions_callback, queue_size=10)
         self.start_pub = rospy.Publisher("/social_sim/start_trial", TrialStart, queue_size=10)
         #self.goal_pub = rospy.Publisher("/move_base/goal", MoveBaseActionGoal, queue_size=10)
         self.status_sub = rospy.Subscriber("/social_sim/is_running", Bool, self.status_callback, queue_size=10)
         self.info_sub = rospy.Subscriber("/social_sim/last_info", TrialInfo, self.info_callback, queue_size=10)
 
-        self.move_client = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+        self.move_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.move_client.wait_for_server()
 
 
@@ -37,9 +38,14 @@ class SocialSimRunner(object):
         print(self.time_limit)
         self.trial_name = rospy.get_param('~trial_name')
         print(self.trial_name)
-        rospy.spin()
 
-        #self.csvfile = csv.open(trial_name + '.csv', 'wb')
+        file = open(self.trial_name + '.csv', 'w')
+        fnames = ['timestamp', 'dist_to_target', 'dist_to_ped',
+                  'num_collisions', 'run_complete', 'time_elapsed']
+        self.writer = csv.DictWriter(file, fieldnames=fnames)
+        self.writer.writeheader()
+
+        rospy.spin()
 
     def positions_callback(self, positions_msg):
         positions = positions_msg.positions
@@ -56,7 +62,8 @@ class SocialSimRunner(object):
         if self.is_trialing is False \
         and self.info_stamp != self.prev_info_stamp \
         and self.trial_ready is True:
-            self.record_csv()
+            if self.info_ready:
+                self.record_csv()
             self.run_trial()
             self.move_client.send_goal(self.goal)
             self.prev_info_stamp = self.info_stamp
@@ -69,6 +76,7 @@ class SocialSimRunner(object):
     def info_callback(self, trial_info_msg):
         self.trial_info = trial_info_msg
         self.info_stamp = self.trial_info.header.stamp.secs
+        self.info_ready = True
 
     def run_trial(self):
         if self.current_trial >= self.num_trials:
@@ -93,9 +101,14 @@ class SocialSimRunner(object):
         self.current_trial += 1
 
     def record_csv(self):
-        #writer = csv.writer(self.csvfile)
-        #writer.writerow(self.trial_info)
-        return
+        self.writer.writerow({
+                'timestamp': self.trial_info.header.stamp,
+                'dist_to_target': self.trial_info.dist_to_target,
+                'dist_to_ped': self.trial_info.dist_to_ped,
+                'num_collisions': self.trial_info.num_collisions,
+                'run_complete': self.trial_info.run_complete,
+                'time_elapsed': self.trial_info.time_elapsed
+            })
 
 
 if __name__ == "__main__":
