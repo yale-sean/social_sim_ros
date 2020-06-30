@@ -22,28 +22,29 @@ class SocialSimRunner(object):
         self.info_ready = False
         self.positions_sub = rospy.Subscriber("/social_sim/spawn_positions", PoseArray, self.positions_callback, queue_size=10)
         self.start_pub = rospy.Publisher("/social_sim/start_trial", TrialStart, queue_size=10)
-        #self.goal_pub = rospy.Publisher("/move_base/goal", MoveBaseActionGoal, queue_size=10)
         self.status_sub = rospy.Subscriber("/social_sim/is_running", Bool, self.status_callback, queue_size=10)
         self.info_sub = rospy.Subscriber("/social_sim/last_info", TrialInfo, self.info_callback, queue_size=10)
 
         self.move_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.move_client.wait_for_server()
 
-
-        self.num_trials = rospy.get_param('~num_trials')
-        print(self.num_trials)
-        self.num_peds = rospy.get_param('~num_peds')
-        print(self.num_peds)
-        self.time_limit = rospy.get_param('~time_limit')
-        print(self.time_limit)
+        self.num_trials = rospy.get_param('~num_trials', 10)
+        print("Number of Trials: {}".format(self.num_trials))
+        self.num_peds = rospy.get_param('~num_peds', 10)
+        print("Number of Pedestrians: {}".format(self.num_peds))
+        self.time_limit = rospy.get_param('~time_limit_sec', 90)
+        print("Time limit (sec): {}".format(self.time_limit))
         self.trial_name = rospy.get_param('~trial_name')
-        print(self.trial_name)
+        print("Trial name: {}".format(self.trial_name))
 
         file = open(self.trial_name + '.csv', 'w')
         fnames = ['timestamp', 'dist_to_target', 'dist_to_ped',
                   'num_collisions', 'run_complete', 'time_elapsed']
         self.writer = csv.DictWriter(file, fieldnames=fnames)
         self.writer.writeheader()
+
+        print("Waiting for a /social_sim/is_running message")
+        print("Please start Unity")
 
         rospy.spin()
 
@@ -79,6 +80,7 @@ class SocialSimRunner(object):
         self.info_ready = True
 
     def run_trial(self):
+        print("Running Trial {}".format(self.current_trial))
         if self.current_trial >= self.num_trials:
             return
         self.trial_start_msg = TrialStart()
@@ -87,12 +89,6 @@ class SocialSimRunner(object):
         self.trial_start_msg.target = self.target_pos
         self.trial_start_msg.num_peds = self.num_peds
         self.trial_start_msg.time_limit = self.time_limit
-        '''
-        self.goal_msg = MoveBaseActionGoal()
-        self.goal_msg.header.stamp = rospy.Time.now()
-        self.goal_msg.goal.target_pose.header.stamp = rospy.Time.now()
-        self.goal_msg.goal.target_pose.header.frame_id = "map"
-        '''
         self.goal = MoveBaseGoal()
         self.goal.target_pose.header.frame_id = "map"
         self.goal.target_pose.header.stamp = rospy.Time.now()
@@ -114,6 +110,5 @@ class SocialSimRunner(object):
 if __name__ == "__main__":
     try:
         node = SocialSimRunner()
-        #node.run_trial()
     except rospy.ROSInterruptException:
         pass
