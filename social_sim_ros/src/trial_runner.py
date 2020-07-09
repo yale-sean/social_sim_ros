@@ -15,6 +15,9 @@ class SocialSimRunner(object):
     def __init__(self):
         rospy.init_node("social_sim_runner")
 
+        # to avoid starting the next trial too soon
+        self.debounce_seconds = rospy.Duration.from_sec(3.0)
+
         # call to restart the trial runner
         self.reset_state()
 
@@ -51,6 +54,9 @@ class SocialSimRunner(object):
         rospy.spin()
 
     def reset_state(self):
+        self.last_info_msg_time = None
+        self.last_status_msg_time = rospy.Time.now()
+        self.is_trialing = None
         self.positions = None
         self.rows_to_write = []
         self.current_trial = 0
@@ -63,6 +69,10 @@ class SocialSimRunner(object):
         '''
             The status message indicates if a trial is currently being run or not
         '''
+        now = rospy.Time.now()
+        if now - self.last_status_msg_time < self.debounce_seconds:
+            return
+        self.last_status_msg_time = rospy.Time.now()
         self.is_trialing = trial_status_msg.data
         self.should_run_trial()
 
@@ -73,6 +83,9 @@ class SocialSimRunner(object):
         # Wait for positions before we record any info
         if self.positions == None:
             return
+        if self.last_info_msg_time == trial_info_msg.header.stamp:
+            return
+        self.last_info_msg_time = trial_info_msg.header.stamp
         self.record_row(trial_info_msg)
         # run a new trial, if ready
         self.should_run_trial()
@@ -96,7 +109,7 @@ class SocialSimRunner(object):
         if self.current_trial == 0:
             return self.run_trial()
         # if we are not running a trial, run a new one
-        if not self.is_trialing:
+        if self.is_trialing == False:
             return self.run_trial()
 
     def pick_positions(self):
