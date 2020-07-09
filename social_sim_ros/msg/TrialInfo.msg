@@ -1,6 +1,8 @@
 # Message containing the information of running a single A-B navigation trial
 
 Header      header
+string      trial_name      # Which trial name are we running
+uint16      trial_number    # Which trial number are we running
 float64     dist_to_target  # Distance to target at the end of the trial
 float64     dist_to_ped     # Minimum distance to any pedestrian throughout the trial
 uint32      num_collisions  # Number of times that the robot collided with any object

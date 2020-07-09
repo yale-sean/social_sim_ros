@@ -26,6 +26,8 @@ class SocialSimRunner(object):
         print("Number of Pedestrians: {}".format(self.num_peds))
         self.time_limit = rospy.get_param('~time_limit_sec', 90)
         print("Time limit (sec): {}".format(self.time_limit))
+        self.teleop = rospy.get_param('~teleop', False)
+        print("Teleop mode: {}".format(self.teleop))
         self.trial_name = rospy.get_param('~trial_name')
         print("Trial name: {}".format(self.trial_name))
 
@@ -37,56 +39,100 @@ class SocialSimRunner(object):
         self.status_sub = rospy.Subscriber("/social_sim/is_running", Bool, self.status_callback, queue_size=10)
         self.info_sub = rospy.Subscriber("/social_sim/last_info", TrialInfo, self.info_callback, queue_size=10)
 
-        self.move_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        self.move_client.wait_for_server()
+        if not self.teleop:
+            print("Waiting for the move_base action server")
+            print("  enable _teleop:=True to skip this")
+            self.move_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+            self.move_client.wait_for_server()
 
-        print("Waiting for a /social_sim/is_running message")
+        print("Waiting for a /social_sim/spawn_positions, /social_sim/is_running message")
         print("Please start Unity")
 
         rospy.spin()
 
     def reset_state(self):
+        self.positions = None
         self.rows_to_write = []
-        self.prev_info_stamp = 0
-        self.info_stamp = 1
         self.current_trial = 0
-        self.trial_ready = False
 
     def positions_callback(self, positions_msg):
-        positions = positions_msg.positions
-        n = len(positions)
-        spawn_pos_idx = randint(0, n - 1)
-        self.spawn_pos = positions[spawn_pos_idx]
-        del positions[spawn_pos_idx]
-        target_pos_idx = randint(0, n - 2)
-        self.target_pos = positions[target_pos_idx]
-        self.trial_ready = True
+        if self.positions is None: 
+            self.positions = positions_msg.positions
 
     def status_callback(self, trial_status_msg):
-        if not self.trial_ready:
-            return
-        # boolean message indicates if unity is running
-        is_trialing = trial_status_msg.data
-        if not is_trialing and self.info_stamp != self.prev_info_stamp:
-            self.run_trial()
+        '''
+            The status message indicates if a trial is currently being run or not
+        '''
+        self.is_trialing = trial_status_msg.data
+        self.should_run_trial()
 
     def info_callback(self, trial_info_msg):
+        '''
+            The info callback returns the current state of the trial
+        '''
+        # Wait for positions before we record any info
+        if self.positions == None:
+            return
         self.record_row(trial_info_msg)
+        # run a new trial, if ready
+        self.should_run_trial()
+
+    def should_run_trial(self):
+        '''
+            Decides if a new trial should be run, executed after both the status and info callbacks
+
+            A new trial is run when:
+
+                We have positions and the current trial is 0, indicating this node has just been started
+
+                OR
+
+                Unity is not running a trial (is_trialing == False)
+        '''
+        # don't run trials without positions
+        if self.positions is None:
+            return
+        # startup case, start a new trial no matter what state unity is in
+        if self.current_trial == 0:
+            return self.run_trial()
+        # if we are not running a trial, run a new one
+        if not self.is_trialing:
+            return self.run_trial()
+
+    def pick_positions(self):
+        n = len(self.positions)
+        spawn_pos_idx = randint(0, n - 1)
+        self.spawn_pos = self.positions[spawn_pos_idx]
+        del self.positions[spawn_pos_idx]
+        target_pos_idx = randint(0, n - 2)
+        self.target_pos = self.positions[target_pos_idx]
+
+    
+    def check_complete(self):
+        ''' Called before every trial run
+            Checks if we have completed the requested trials
+        '''
+        if self.current_trial < self.num_trials:
+            return
+        print("Trials complete")
+        # Save our data
+        self.record_csv()
+        rospy.signal_shutdown("Trials Complete")
+        print("Exiting")
+        exit()
 
     def run_trial(self):
+        self.check_complete()
+        self.current_trial += 1
         print("Running Trial {}".format(self.current_trial))
-        if self.current_trial >= self.num_trials:
-            print("Trials complete")
-            self.record_csv()
-            # TODO: reset to start state
-            # self.is_trialing = False
-            print("Exiting")
-            rospy.signal_shutdown("Trials Complete")
-            return
+
+        self.pick_positions()
 
         # trial is starting, publish message
         trial_start_msg = TrialStart()
         trial_start_msg.header.stamp = rospy.Time.now()
+        trial_start_msg.trial_name = self.trial_name
+        trial_start_msg.trial_number = self.current_trial
         trial_start_msg.spawn = self.spawn_pos
         trial_start_msg.target = self.target_pos
         trial_start_msg.num_peds = self.num_peds
@@ -94,20 +140,19 @@ class SocialSimRunner(object):
         self.start_pub.publish(trial_start_msg)
 
         # send goal
-        goal = MoveBaseGoal()
-        goal.target_pose.header.frame_id = "map"
-        goal.target_pose.header.stamp = rospy.Time.now()
-        goal.target_pose.pose = self.target_pos
-        self.move_client.send_goal(goal)
-
-        # record previous stamp
-        self.prev_info_stamp = self.info_stamp
-        self.current_trial += 1
+        if not self.teleop:
+            goal = MoveBaseGoal()
+            goal.target_pose.header.frame_id = "map"
+            goal.target_pose.header.stamp = rospy.Time.now()
+            goal.target_pose.pose = self.target_pos
+            self.move_client.send_goal(goal)
 
     def record_row(self, msg):
         self.info_stamp = msg.header.stamp.secs
         row = {
             'timestamp': msg.header.stamp,
+            'trial_name': msg.trial_name,
+            'trial_number': msg.trial_number,
             'dist_to_target': msg.dist_to_target,
             'dist_to_ped': msg.dist_to_ped,
             'num_collisions': msg.num_collisions,
@@ -121,10 +166,9 @@ class SocialSimRunner(object):
             print("ERROR: No rows to write")
             return
         fieldnames = self.rows_to_write[0].keys()
-        csv_path = os.path.join(self.output_folder, '{}_{}.csv'.format(self.trail_name, self.rows_to_write[0]['timestamp']))
+        csv_path = os.path.join(self.output_folder, '{}_{}.csv'.format(self.trial_name, self.rows_to_write[0]['timestamp']))
         with open(csv_path, 'w') as f:
-            self.writer = csv.DictWriter(file)
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             for row in self.rows_to_write:
                 writer.writerow(row)
