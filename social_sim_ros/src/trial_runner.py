@@ -16,7 +16,7 @@ class SocialSimRunner(object):
         rospy.init_node("social_sim_runner")
 
         # to avoid starting the next trial too soon
-        self.debounce_seconds = rospy.Duration.from_sec(3.0)
+        self.debounce_seconds = rospy.Duration.from_sec(1.0)
 
         # call to restart the trial runner
         self.reset_state()
@@ -55,6 +55,7 @@ class SocialSimRunner(object):
 
     def reset_state(self):
         self.last_info_msg_time = None
+        self.last_status_msg_state = None
         self.last_status_msg_time = rospy.Time.now()
         self.is_trialing = None
         self.positions = None
@@ -73,7 +74,11 @@ class SocialSimRunner(object):
         if now - self.last_status_msg_time < self.debounce_seconds:
             return
         self.last_status_msg_time = rospy.Time.now()
+        # Check for a change since the last message, must last longer than the debouce time
         self.is_trialing = trial_status_msg.data
+        if self.last_status_msg_state == self.is_trialing:
+            return
+        self.last_status_msg_state = self.is_trialing
         self.should_run_trial()
 
     def info_callback(self, trial_info_msg):
@@ -83,6 +88,7 @@ class SocialSimRunner(object):
         # Wait for positions before we record any info
         if self.positions == None:
             return
+        # Debounce
         if self.last_info_msg_time == trial_info_msg.header.stamp:
             return
         self.last_info_msg_time = trial_info_msg.header.stamp
