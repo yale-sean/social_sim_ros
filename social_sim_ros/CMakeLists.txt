@@ -6,15 +6,6 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
-add_message_files(
-  FILES
-    PersonEntry.msg
-    PersonEntryArray.msg
-    PoseArray.msg
-    TrialInfo.msg
-    TrialStart.msg
-)
-
 find_package(catkin REQUIRED COMPONENTS
     controller_interface
     controller_manager
@@ -27,6 +18,15 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
     std_msgs
     geometry_msgs
+)
+
+add_message_files(
+  FILES
+    PersonEntry.msg
+    PersonEntryArray.msg
+    PoseArray.msg
+    TrialInfo.msg
+    TrialStart.msg
 )
 
 generate_messages(
