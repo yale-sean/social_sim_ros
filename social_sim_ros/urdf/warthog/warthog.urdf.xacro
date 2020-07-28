@@ -69,7 +69,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="${prefix}_${side}_wheel_joint" type="continuous">
+    <joint name="${prefix}_${side}_wheel" type="continuous">
       <parent link="${side}_diff_unit_link"/>
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
@@ -86,7 +86,7 @@
     </gazebo>
     <transmission name="${prefix}_${side}_wheel_trans">
       <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${prefix}_${side}_wheel_joint">
+      <joint name="${prefix}_${side}_wheel">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       </joint>
       <actuator name="${prefix}_${side}_actuator">
@@ -128,7 +128,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="${prefix}_${side}_wheel_joint" type="continuous">
+    <joint name="${prefix}_${side}_wheel" type="continuous">
       <parent link="${side}_diff_unit_link"/>
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
@@ -136,7 +136,7 @@
     </joint>
     <transmission name="${prefix}_${side}_wheel_trans">
       <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${prefix}_${side}_wheel_joint">
+      <joint name="${prefix}_${side}_wheel">
         <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
       </joint>
       <actuator name="${prefix}_${side}_actuator">
@@ -146,7 +146,7 @@
     </transmission>
   </xacro:macro>
 
-  
+  <xacro:unless value="$(optenv WARTHOG_TRACKS 0)">
     <xacro:wheel prefix="front" side="left">
       <origin xyz="${axle_x_offset*1} ${axle_y_offset*1} ${axle_z_offset}" rpy="0 0 0" />
     </xacro:wheel>
@@ -159,7 +159,7 @@
     <xacro:wheel prefix="rear" side="right">
       <origin xyz="${axle_x_offset*-1} ${axle_y_offset*-1} ${axle_z_offset}" rpy="0 0 0" />
     </xacro:wheel>
-  
+  </xacro:unless>
 
   <xacro:if value="$(optenv WARTHOG_TRACKS 0)">
     <xacro:track prefix="front" side="left">
@@ -219,13 +219,10 @@
         </geometry>
       </collision>
     </link>
-    <joint name="${prefix}_diff_unit_joint" type="revolute">
-      <limit upper="0.4" lower="-0.4" effort="100" velocity="1"/>
+    <joint name="${prefix}_diff_unit_joint" type="fixed">
       <parent link="chassis_link"/>
       <child link="${prefix}_diff_unit_link"/>
       <origin xyz="${diff_unit_offset_x} ${diff_unit_offset_y*side} ${diff_unit_offset_z}" rpy="0 0 0" />
-      <axis xyz="0 1 0"/>
-      <dynamics damping="100" friction="0.5"/>
     </joint>
     <gazebo reference="${prefix}_diff_unit_link">
       <selfCollide>false</selfCollide>
@@ -233,8 +230,8 @@
     </gazebo>
   </xacro:macro>
 
-  <xacro:diff_unit prefix="left" side="1" left="true"></xacro:diff_unit>
-  <xacro:diff_unit prefix="right" side="-1" left="false"></xacro:diff_unit>
+  <xacro:diff_unit prefix="left" side="1" left="true"/>
+  <xacro:diff_unit prefix="right" side="-1" left="false"/>
 
   <link name="base_link"></link>
 
