@@ -2,9 +2,11 @@
 <launch>
   <arg name="config" default="base" />
 
+  <env name="WARTHOG_TRACKS" value="0"/>
+
   <param name="robot_description"
-         command="$(find social_sim_ros)/urdf/warthog/configs/$(arg config)
-                  $(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro
-                  --inorder" />
+         command="$(find warthog_description)/scripts/env_run
+                  $(find warthog_description)/urdf/configs/$(arg config)
+                  $(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro --inorder" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 </launch>

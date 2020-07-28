@@ -146,7 +146,7 @@
     </transmission>
   </xacro:macro>
 
-  <xacro:unless value="$(optenv WARTHOG_TRACKS 0)">
+  
     <xacro:wheel prefix="front" side="left">
       <origin xyz="${axle_x_offset*1} ${axle_y_offset*1} ${axle_z_offset}" rpy="0 0 0" />
     </xacro:wheel>
@@ -159,7 +159,7 @@
     <xacro:wheel prefix="rear" side="right">
       <origin xyz="${axle_x_offset*-1} ${axle_y_offset*-1} ${axle_z_offset}" rpy="0 0 0" />
     </xacro:wheel>
-  </xacro:unless>
+  
 
   <xacro:if value="$(optenv WARTHOG_TRACKS 0)">
     <xacro:track prefix="front" side="left">
@@ -233,8 +233,8 @@
     </gazebo>
   </xacro:macro>
 
-  <xacro:diff_unit prefix="left" side="1" left="true"/>
-  <xacro:diff_unit prefix="right" side="-1" left="false"/>
+  <xacro:diff_unit prefix="left" side="1" left="true"></xacro:diff_unit>
+  <xacro:diff_unit prefix="right" side="-1" left="false"></xacro:diff_unit>
 
   <link name="base_link"></link>
 
