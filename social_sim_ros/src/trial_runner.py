@@ -158,12 +158,14 @@ class SocialSimRunner(object):
                     rospy.signal_shutdown(msg)
                 self.spawn_positions = self.all_positions['spawn']
                 self.target_positions = self.all_positions['target']
+                self.people_positions = self.all_positions['people']
             self.repeat = True
         else:
             self.all_positions = {
                 'all': all_pos,
                 'spawn': {},
-                'target': {}
+                'target': {},
+                'people': {}
             }
             self.persist_positions()
             return
@@ -231,19 +233,32 @@ class SocialSimRunner(object):
                 msg = "could not find trial {} in the existing positions, exiting".format(trial_key)
                 logging.warn(msg)
                 rospy.signal_shutdown(msg)
-            return msg_dict_to_ros('geometry_msgs/Pose', self.spawn_positions[str(self.current_trial)]), msg_dict_to_ros('geometry_msgs/Pose', self.target_positions[str(self.current_trial)])
+            spawn_pos = msg_dict_to_ros('geometry_msgs/Pose', self.spawn_positions[trial_key])
+            target_pos = msg_dict_to_ros('geometry_msgs/Pose', self.target_positions[trial_key])
+            people_poses = [msg_dict_to_ros('geometry_msgs/Pose', p) for p in self.people_positions[trial_key]]
+            return spawn_pos, target_pos, people_poses
         # otherwise, random position for each trial
         if self.position_mode == 'once' and self.spawn_pos:
             # keep the current (first) spawn / target pos
-            return self.spawn_pos, self.target_pos
+            return self.spawn_pos, self.target_pos, self.people_poses
         # random choice
-        n = len(self.positions)
-        spawn_pos_idx = randint(0, n - 1)
+        print("Randomly choosing 1 of {} available positions".format(len(self.positions)))
+        n = len(self.positions) - 1
+        spawn_pos_idx = randint(0, n)
+        n -= 1
         spawn_pos = self.positions[spawn_pos_idx]
-        del self.positions[spawn_pos_idx]
-        target_pos_idx = randint(0, n - 2)
+        target_pos_idx = randint(0, n)
+        n -= 1
         target_pos = self.positions[target_pos_idx]
-        return spawn_pos, target_pos
+        people_poses = []
+        for i in range(self.num_peds):
+            # re-use spawn positions, we we need to
+            if n < 0:
+                n = len(self.positions) - 1
+            idx = randint(0, n)
+            n -= 1
+            people_poses.append(self.positions[idx])
+        return spawn_pos, target_pos, people_poses
 
     def check_complete(self):
         ''' Called before every trial run
@@ -262,20 +277,27 @@ class SocialSimRunner(object):
         logging.info("Running Trial {}".format(self.current_trial))
 
         # populates spawn
-        self.spawn_pos, self.target_pos = self.pick_positions()
+        self.spawn_pos, self.target_pos, self.people_poses = self.pick_positions()
+        stamp = rospy.Time.now()
+        people = PoseArray()
+        people.header.stamp = stamp
+        for pose in self.people_poses:
+            people.poses.append(pose)
+
         # persist the positions
         self.all_positions['spawn'][self.current_trial] = msg_ros_to_dict(self.spawn_pos)
         self.all_positions['target'][self.current_trial] = msg_ros_to_dict(self.target_pos)
+        self.all_positions['people'][self.current_trial] = [msg_ros_to_dict(pose) for pose in self.people_poses]
         self.persist_positions()
 
         # trial is starting, publish message
         trial_start_msg = TrialStart()
-        trial_start_msg.header.stamp = rospy.Time.now()
+        trial_start_msg.header.stamp = stamp
         trial_start_msg.trial_name = self.trial_name
         trial_start_msg.trial_number = self.current_trial
         trial_start_msg.spawn = self.spawn_pos
         trial_start_msg.target = self.target_pos
-        trial_start_msg.num_peds = self.num_peds
+        trial_start_msg.people = people
         trial_start_msg.time_limit = self.time_limit
         self.start_pub.publish(trial_start_msg)
 
