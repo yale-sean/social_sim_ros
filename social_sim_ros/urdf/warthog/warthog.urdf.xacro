@@ -70,7 +70,8 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_wheel" type="continuous">
-      <parent link="${side}_diff_unit_link"/>
+      <!-- <parent link="${side}_diff_unit_link"/> --> <!-- we put tires under chassis_link-->
+      <parent link="chassis_link"/>
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
@@ -113,7 +114,8 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_track_joint" type="fixed">
-      <parent link="${side}_diff_unit_link"/>
+      <!-- <parent link="${side}_diff_unit_link"/> -->
+      <parent link="chassis_link" />
       <child link="${prefix}_${side}_track_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
@@ -129,7 +131,8 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_wheel" type="continuous">
-      <parent link="${side}_diff_unit_link"/>
+      <!-- <parent link="${side}_diff_unit_link"/> -->
+      <parent link="chassis_link" />
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
