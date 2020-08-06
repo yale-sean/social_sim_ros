@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<launch>
-  <arg name="config" default="base" />
+ <launch> <arg name="config" default="base" />
 
+  <env name="WARTHOG_TRACKS" value="0" />
   <param name="robot_description"
-         command="$(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro" />
+    command="$(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 </launch>

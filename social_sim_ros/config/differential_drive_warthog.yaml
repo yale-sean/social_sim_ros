@@ -1,4 +1,4 @@
-jackal_joint_publisher:
+warthog_joint_publisher:
   type: "joint_state_controller/JointStateController"
   publish_rate: 50
 

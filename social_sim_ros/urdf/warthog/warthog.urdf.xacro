@@ -70,8 +70,7 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_wheel" type="continuous">
-      <!-- <parent link="${side}_diff_unit_link"/> --> <!-- we put tires under chassis_link-->
-      <parent link="chassis_link"/>
+      <parent link="${side}_diff_unit_link"/>
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
@@ -114,8 +113,7 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_track_joint" type="fixed">
-      <!-- <parent link="${side}_diff_unit_link"/> -->
-      <parent link="chassis_link" />
+      <parent link="${side}_diff_unit_link"/>
       <child link="${prefix}_${side}_track_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
@@ -131,8 +129,7 @@
       </collision>
     </link>
     <joint name="${prefix}_${side}_wheel" type="continuous">
-      <!-- <parent link="${side}_diff_unit_link"/> -->
-      <parent link="chassis_link" />
+      <parent link="${side}_diff_unit_link"/>
       <child link="${prefix}_${side}_wheel_link"/>
       <xacro:insert_block name="joint_pose" />
       <axis xyz="0 1 0"/>
@@ -223,9 +220,12 @@
       </collision>
     </link>
     <joint name="${prefix}_diff_unit_joint" type="fixed">
+      <limit upper="0.4" lower="-0.4" effort="100" velocity="1"/>
       <parent link="chassis_link"/>
       <child link="${prefix}_diff_unit_link"/>
       <origin xyz="${diff_unit_offset_x} ${diff_unit_offset_y*side} ${diff_unit_offset_z}" rpy="0 0 0" />
+      <axis xyz="0 1 0"/>
+      <dynamics damping="100" friction="0.5"/>
     </joint>
     <gazebo reference="${prefix}_diff_unit_link">
       <selfCollide>false</selfCollide>
@@ -317,14 +317,6 @@
     <parent link="chassis_link"/>
     <child link="imu_link" />
   </joint>
-
-  <link name="laser"></link>
-  <joint name="laser_joint" type="fixed">
-    <parent link="chassis_link" />
-    <child link="laser" />
-    <origin xyz="0 0 0.214" />
-  </joint>
-
   <!-- Bring in simulation data for Gazebo. -->
   <xacro:include filename="$(find warthog_description)/urdf/warthog.gazebo" />
 

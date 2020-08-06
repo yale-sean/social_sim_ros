@@ -2,11 +2,12 @@
   <!-- Load jackal model -->
   <arg name="config" default="base" />
   <arg name="env_runner" value="$(eval 'env_run' if not optenv('OS', 'unknown').lower().startswith('windows') else 'env_run.bat')" />
+
+  <env name="WARTHOG_TRACKS" value="0" />
+  <!--
   <param name="robot_description"
-         command="$(find jackal_description)/scripts/$(arg env_runner)
-                    $(find jackal_description)/urdf/configs/$(arg config)
-                    $(find xacro)/xacro $(find jackal_description)/urdf/jackal.urdf.xacro
-                    --inorder" />
+         command="$(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro" />
+         -->
 
   <!-- Start diffbot via controller manager -->
   <!-- https://github.com/ros-controls/ros_controllers/blob/noetic-devel/diff_drive_controller/test/diffbot.cpp -->
@@ -21,5 +22,5 @@
   <!-- Spawn controller -->
   <node name="controller_spawner"
         pkg="controller_manager" type="spawner" output="screen"
-        args="jackal_joint_publisher mobile_base_controller" />
+        args="warthog_joint_publisher mobile_base_controller" />
 </launch>
