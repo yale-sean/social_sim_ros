@@ -1,5 +1,5 @@
 <launch>
-  <!-- Load jackal model -->
+  <!-- Load warthog model -->
   <env name="WARTHOG_TRACKS" value="0" />
   <param name="robot_description"
          command="$(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro" />

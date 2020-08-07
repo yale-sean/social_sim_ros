@@ -273,8 +273,16 @@
     </collision>
   </link>
 
-  <link name="top_chassis_link"></link>
+  <link name="velodyne"></link>
+  <joint name="velodyne_joint" type="fixed">
+    <parent link="top_chassis_link" />
+    <child link="velodyne" />
+    <origin xyz="0 0 0.75" />
+  </joint>
 
+
+
+  <link name="top_chassis_link"></link>
   <joint name="top_link_joint" type="fixed">
     <origin xyz="0 0 0.27218" rpy="0 0 0" />
     <parent link="chassis_link"/>
