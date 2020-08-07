@@ -3,8 +3,8 @@
   <!-- <include file="$(find social_sim_teleop)/launch/includes/velocity_smoother.launch.xml"/> -->
 
   <node pkg="social_sim_teleop" type="social_sim_teleop_joy" name="social_sim_teleop_joystick">
-    <param name="scale_angular" value="1.5"/>
-    <param name="scale_linear" value="0.5"/>
+    <param name="scale_angular" value="4"/>
+    <param name="scale_linear" value="2"/>
     <param name="axis_deadman" value="4"/>
     <param name="axis_linear" value="1"/>
     <param name="axis_angular" value="0"/>
