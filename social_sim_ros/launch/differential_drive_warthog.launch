@@ -1,8 +1,4 @@
 <launch>
-  <!-- Load warthog model -->
-  <env name="WARTHOG_TRACKS" value="0" />
-  <param name="robot_description"
-         command="$(find xacro)/xacro $(find social_sim_ros)/urdf/warthog/warthog.urdf.xacro" />
 
   <!-- Start diffbot via controller manager -->
   <!-- https://github.com/ros-controls/ros_controllers/blob/noetic-devel/diff_drive_controller/test/diffbot.cpp -->

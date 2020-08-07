@@ -1,7 +1,4 @@
 <launch>
-  <!-- Load jackal model -->
-  <arg name="config" default="base" />
-  <arg name="env_runner" value="$(eval 'env_run' if not optenv('OS', 'unknown').lower().startswith('windows') else 'env_run.bat')" />
 
   <!-- Start diffbot via controller manager -->
   <!-- https://github.com/ros-controls/ros_controllers/blob/noetic-devel/diff_drive_controller/test/diffbot.cpp -->
