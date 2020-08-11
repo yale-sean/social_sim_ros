@@ -20,12 +20,12 @@ TrajectoryPlannerROS:
   latch_xy_goal_tolerance: false
 
   # Forward Simulation Parameters
-  sim_time: 2.0
+  sim_time: 4.0
   sim_granularity: 0.02
   angular_sim_granularity: 0.02
   vx_samples: 6
-  vtheta_samples: 20
-  controller_frequency: 20.0
+  vtheta_samples: 40
+  controller_frequency: 10.0
 
   # Trajectory scoring parameters
   meter_scoring: true # Whether the gdist_scale and pdist_scale parameters should assume that goal_distance and path_distance are expressed in units of meters or cells. Cells are assumed by default (false).
