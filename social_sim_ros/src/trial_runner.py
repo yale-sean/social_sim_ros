@@ -314,7 +314,8 @@ class SocialSimRunner(object):
         row = {
             'timestamp': msg.header.stamp,
             'trial_name': msg.trial_name,
-            'trial_number': msg.trial_number,
+            #'trial_number': msg.trial_number,
+            'trial_number' : self.current_trial + 1,
             'dist_to_target': msg.dist_to_target,
             'dist_to_ped': msg.dist_to_ped,
             'num_collisions': msg.num_collisions,
