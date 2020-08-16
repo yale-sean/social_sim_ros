@@ -15,12 +15,28 @@
   <build_depend>std_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
 
-
   <build_export_depend>rospy</build_export_depend>
 
   <exec_depend>rospy</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>gmapping</exec_depend>
+  <exec_depend>ros_control</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>four_wheel_steering_msgs</exec_depend>
+  <exec_depend>urdf_geometry_parser</exec_depend>
+  <exec_depend>jackal_description</exec_depend>
+  <exec_depend>jackal_navigation</exec_depend>
+  <exec_depend>jackal_viz</exec_depend>
+  <exec_depend>warthog_description</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>velodyne</exec_depend>
+  <exec_depend>velodyne_pointcloud</exec_depend>
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
+  <exec_depend>rospy_message_converter</exec_depend>
 
 </package>
