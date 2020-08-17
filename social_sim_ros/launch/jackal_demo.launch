@@ -1,0 +1,23 @@
+<launch>
+
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
+  <node pkg="social_sim_ros" name="odom_to_tf" type="odom_to_tf.py" output="screen"/>
+  
+  <include file="$(find social_sim_ros)/launch/jackal_move_base.launch" />
+
+  <include file="$(find social_sim_ros)/launch/jackal_description.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/differential_drive_jackal.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/gmapping_jackal.launch"/>
+
+  <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/jackal_velodyne_to_laser.launch"/>
+
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find social_sim_ros)/config/jackal_move.rviz" />
+
+  
+</launch>
