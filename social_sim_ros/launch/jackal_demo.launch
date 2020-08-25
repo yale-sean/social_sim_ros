@@ -3,7 +3,9 @@
 
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
-  <node pkg="social_sim_ros" name="odom_to_tf" type="odom_to_tf.py" output="screen"/>
+  <node pkg="social_sim_ros" name="odom_to_tf" type="odom_to_tf.py" output="screen">
+    <param name="publish_map_frame" type="bool" value="true" />
+  </node>
   
   <include file="$(find social_sim_ros)/launch/jackal_move_base.launch" />
 
@@ -11,7 +13,9 @@
 
   <include file="$(find social_sim_ros)/launch/differential_drive_jackal.launch"/>
 
-  <include file="$(find social_sim_ros)/launch/gmapping_jackal.launch"/>
+  <!--<include file="$(find social_sim_ros)/launch/gmapping_jackal.launch"/>-->
+
+  <include file="$(find social_sim_ros)/launch/lab_map_server.launch"/>
 
   <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"/>
 

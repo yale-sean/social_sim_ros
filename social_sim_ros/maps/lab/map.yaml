@@ -1,0 +1,6 @@
+image: short_map.jpg
+resolution: 0.1
+origin: [-3,-5,0]
+occupied_thresh: 0.5
+free_thresh: 0.5
+negate: 0

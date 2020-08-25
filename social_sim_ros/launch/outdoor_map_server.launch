@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="map_server" name="map_server" type="map_server" args="$(find social_sim_ros)/maps/outdoor/map.yaml" output="screen" />
+</launch>
