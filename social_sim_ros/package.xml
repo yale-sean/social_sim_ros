@@ -38,5 +38,6 @@
   <exec_depend>velodyne_pointcloud</exec_depend>
   <exec_depend>pointcloud_to_laserscan</exec_depend>
   <exec_depend>rospy_message_converter</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
 
 </package>
