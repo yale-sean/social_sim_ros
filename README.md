@@ -6,10 +6,10 @@ This is the ROS project for SEAN: Social Environment for Autonomous Navigation
 
 Other repositories for the project are:
 
-  - ROS project (this repository): https://github.com/yale-img/social_sim_ros
+  - ROS project (this repository): https://github.com/yale-sean/social_sim_ros
 
-  - Unity Project: https://github.com/yale-img/social_sim_unity
+  - Unity Project: https://github.com/yale-sean/social_sim_unity
 
-  - Documentation: https://github.com/yale-img/social-sim-docs
+  - Documentation: https://github.com/yale-sean/docs
 
-  - Dockerized Catkin Workspace: https://github.com/yale-img/sim_ws
+  - Dockerized Catkin Workspace: https://github.com/yale-sean/sim_ws
