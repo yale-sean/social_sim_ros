@@ -1,0 +1,30 @@
+<launch>
+  <arg name="scene" default="lab" />
+  <arg name="port" default="9090" />
+  <arg name="datapath" />
+  <arg name="duration" default="5m" />
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+    <arg name="port" value="$(arg port)" />
+  </include>
+
+  <node pkg="social_sim_ros" name="odom_to_tf" type="odom_to_tf.py" output="screen">
+    <param name="publish_map_frame" type="bool" value="true" />
+  </node>
+
+  <include file="$(find social_sim_ros)/launch/kuri_move_base.launch" />
+
+  <include file="$(find social_sim_ros)/launch/kuri_description.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/lab_map_server.launch">
+    <arg name="scene" value="$(arg scene)" />
+  </include>
+
+  <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"/>
+
+  <node pkg="rosbag" type="record" name="rosbag_record"
+       args="record --all -o $(arg datapath)/all.bag --duration=$(arg duration)" />
+
+</launch>

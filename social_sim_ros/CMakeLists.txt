@@ -47,3 +47,6 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(differential_drive_sim_controller src/differential_drive_sim_controller.cpp)
 target_link_libraries(differential_drive_sim_controller ${catkin_LIBRARIES})
+
+add_executable(pose_to_people src/pose_to_people.cpp)
+target_link_libraries(pose_to_people ${catkin_LIBRARIES})

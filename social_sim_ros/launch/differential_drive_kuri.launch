@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- Start diffbot via controller manager -->
+  <!-- https://github.com/ros-controls/ros_controllers/blob/noetic-devel/diff_drive_controller/test/diffbot.cpp -->
+  <!-- https://github.com/ros-controls/ros_controllers/blob/noetic-devel/diff_drive_controller/test/diffbot.h -->
+  <node name="differential_drive_sim_controller"
+      pkg="social_sim_ros"
+      type="differential_drive_sim_controller"/>
+
+  <!-- Load controller config -->
+  <rosparam command="load" file="$(find social_sim_ros)/config/differential_drive_kuri.yaml" />
+
+  <!-- Spawn controller -->
+  <node name="controller_spawner"
+        pkg="controller_manager" type="spawner" output="screen"
+        args="kuri_joint_publisher mobile_base_controller" />
+</launch>

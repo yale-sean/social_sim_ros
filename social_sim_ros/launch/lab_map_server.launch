@@ -1,3 +1,4 @@
 <launch>
-  <node pkg="map_server" name="map_server" type="map_server" args="$(find social_sim_ros)/maps/lab/map.yaml" output="screen" />
+  <arg name="scene" default="lab" />
+  <node pkg="map_server" name="map_server" type="map_server" args="$(find social_sim_ros)/maps/$(arg scene)/map.yaml" output="screen" />
 </launch>

@@ -1,0 +1,9 @@
+[submodule "navigation_layers"]
+	path = navigation_layers
+	url = https://github.com/DLu/navigation_layers.git
+[submodule "kuri_description"]
+	path = kuri_description
+	url = http://github.com/yale-img/kuri_description.git
+[submodule "bag2video"]
+	path = bag2video
+	url = http://github.com/nathantsoi/bag2video.git
