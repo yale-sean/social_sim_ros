@@ -18,7 +18,7 @@
 
   <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"/>
 
-  <include file="$(find social_sim_ros)/launch/lab_map_server.launch">
+  <include file="$(find social_sim_ros)/launch/map_server.launch">
     <arg name="scene" value="$(arg scene)" />
   </include>
 

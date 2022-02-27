@@ -1,0 +1,35 @@
+<launch>
+  <arg name="ip" default="0.0.0.0"/>
+  <arg name="port" default="00"/>
+
+  <!-- <arg name="prefix" default="/data/submissions" /> -->
+  <!-- <arg name="condition" default="submission_name_placeholder" /> -->
+  <arg name="datapath" default="" />
+  <arg name="submission_name" default="submission" />
+  <arg name="path"   value="(find $(arg submission_name))" />
+  <arg name="dollar" value="$" />
+
+  <include file="$(find social_sim_ros)/launch/sim_tcp_bridge.launch">
+    <arg name="ip" value="$(arg ip)" />
+    <arg name="port" value="100$(arg port)" />
+  </include>
+
+  <include file="$(find social_sim_ros)/launch/kuri_move_base_global_only.launch"></include>
+  <include file="$(find social_sim_ros)/launch/kuri_description.launch"></include>
+  <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"></include>
+  <node pkg="social_sim_ros" name="map_publisher" type="map_publisher.py" output="screen" />
+
+  <include file="$(find lifecycle_learning)/launch/ps3_teleop_indirect.launch" />
+
+  <!-- <include file="$(find social_sim_ros)/launch/trial_info.launch">
+    <arg name="prefix" value="$(arg prefix)"/>
+    <arg name="condition" value="$(arg condition)"/>
+  </include> -->
+  
+  <include file="$(arg dollar)$(arg path)/launch/submission.launch"/>
+
+  <node pkg="social_sim_ros" type="ros_controlled_recorder.py" name="ros_controlled_recorder" output="screen">
+    <param name="prefix" value="$(arg datapath)"/>
+  </node>
+
+</launch>

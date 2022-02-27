@@ -1,0 +1,7 @@
+<launch>
+  <arg name="prefix" />
+  <node name="ros_controlled_recorder" pkg="social_sim_ros" type="ros_controlled_recorder.py" output="screen">
+    <param name="prefix" type="string" value="$(arg prefix)"/>
+  </node>
+</launch>
+

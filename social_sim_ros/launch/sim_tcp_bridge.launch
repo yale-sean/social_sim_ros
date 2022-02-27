@@ -1,0 +1,11 @@
+<launch>
+  <arg name="ip" default="0.0.0.0" />
+  <arg name="port" default="10000" />
+
+  <param name="use_sim_time" type="bool" value="true" />
+  <rosparam file="$(find social_sim_ros)/params/ros_tcp_endpoint/params.yaml" command="load"/>
+  <node name="tcp_server" pkg="social_sim_ros" type="tcp_server.py" args="--wait" output="screen" respawn="true">
+    <param name="ip" type="string" value="$(arg ip)"/>
+    <param name="port" type="int" value="$(arg port)"/>
+  </node>
+</launch>

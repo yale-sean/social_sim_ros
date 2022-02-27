@@ -1,8 +1,6 @@
 <launch>
  
-  <env name="ROSCONSOLE_CONFIG_FILE" value="$(find social_sim_ros)/config/logging.conf"/>
-
-  <node pkg="move_base" type="move_base" respawn="true" name="move_base" output="screen">
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 
     <rosparam file="$(find social_sim_ros)/params/kuri/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find social_sim_ros)/params/kuri/costmap_common_params.yaml" command="load" ns="local_costmap" />
@@ -12,8 +10,21 @@
     
     <rosparam file="$(find social_sim_ros)/params/kuri/base_local_planner_params.yaml" command="load" />
     <rosparam file="$(find social_sim_ros)/params/kuri/move_base_params.yaml" command="load" />
+
+    <!-- switch the local planner -->
+    <param name="/base_local_planner" value="pose_follower/PoseFollower"/>
+
+    <param name="/move_base/planner_frequency" value="1.0"/>
+    <param name="/move_base/controller_frequency" value="0.0"/>
+
+    <param name="/global_costmap/transform_tolerance" value="10.0"/>
+    <param name="/global_costmap/update_frequency" value="1.0"/>
+
+    <param name="/local_costmap/transform_tolerance" value="10.0"/>
+    <param name="/local_costmap/update_frequency" value="1.0"/>
+    <param name="/local_costmap/publish_frequency" value="1.0"/>
     
-    <remap from="cmd_vel" to="mobile_base_controller/cmd_vel" />
+    <remap from="cmd_vel" to="planner_cmd_vel" />
 
   </node>
 

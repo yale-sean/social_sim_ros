@@ -16,12 +16,12 @@
 
   <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"/>
 
-  <include file="$(find social_sim_ros)/launch/lab_map_server.launch">
+  <include file="$(find social_sim_ros)/launch/map_server.launch">
     <arg name="scene" value="$(arg scene)" />
   </include>
 
   <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"/>
 
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find social_sim_ros)/config/jackal_move.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find social_sim_ros)/config/move.rviz" />
 
 </launch>

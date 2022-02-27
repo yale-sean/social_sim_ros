@@ -1,0 +1,22 @@
+<launch>
+  <arg name="scene" default="warehouse_small" />
+  <arg name="port" default="9090" />
+  <arg name="datapath" />
+  <arg name="duration" default="5m" />
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+    <arg name="port" value="$(arg port)" />
+  </include>
+
+  <include file="$(find social_sim_ros)/launch/odom_to_tf.launch"></include>
+  <include file="$(find social_sim_ros)/launch/kuri_move_base_global_only.launch"></include>
+  <include file="$(find social_sim_ros)/launch/kuri_description.launch"></include>
+  <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"></include>
+  <include file="$(find social_sim_ros)/launch/map_server.launch">
+    <arg name="scene" value="$(arg scene)"/>
+  </include>
+
+  <node pkg="social_sim_ros" type="robot_control_unity.py" name="robot_control_unity"/>
+  <node pkg="social_sim_ros" type="ros_controlled_recorder.py" name="ros_controlled_recorder"/>
+
+</launch>

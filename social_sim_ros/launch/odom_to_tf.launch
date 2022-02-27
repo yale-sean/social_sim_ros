@@ -1,0 +1,7 @@
+<launch>
+
+  <node pkg="social_sim_ros" name="odom_to_tf" type="odom_to_tf.py" output="screen">
+    <param name="publish_map_frame" type="bool" value="true" />
+  </node>
+
+</launch>

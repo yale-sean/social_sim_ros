@@ -1,0 +1,8 @@
+
+<launch>
+
+  <param name="use_sim_time" type="bool" value="true" />
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+
+</launch>

@@ -1,0 +1,16 @@
+<launch>
+
+  <node name="depth_synchronizer"
+      pkg="social_sim_ros"
+      type="depth_synchronizer.py"/>
+
+  <node name="depthimage_to_laserscan"
+        pkg="depthimage_to_laserscan"
+        type="depthimage_to_laserscan"
+        output="screen">
+    <remap from="camera_info" to="/center_depth_sync/camera_info" />
+    <remap from="image" to="/center_depth_sync/image_raw" />
+    <param name="output_frame_id" value="center_depth_link" />
+  </node>
+
+</launch>

@@ -26,6 +26,8 @@ add_message_files(
     PersonEntryArray.msg
     TrialInfo.msg
     TrialStart.msg
+    SceneInfo.msg
+    RealDepthImage.msg
 )
 
 generate_messages(

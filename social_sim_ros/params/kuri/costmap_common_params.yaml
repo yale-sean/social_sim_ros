@@ -10,14 +10,15 @@ publish_voxel_map: false
 transform_tolerance: 2.0
 meter_scoring: true
 
-footprint: [[-0.21, -0.165], [-0.21, 0.165], [0.21, 0.165], [0.21, -0.165]]
-footprint_padding: 0.1
+footprint: ""
+robot_radius: .16
+footprint_padding: 0
 
 plugins:
-- {name: social_layer, type: "social_navigation_layers::ProxemicLayer"}
 - {name: static_layer, type: "costmap_2d::StaticLayer"}
 - {name: obstacles_layer, type: "costmap_2d::ObstacleLayer"}
 - {name: inflater_layer, type: "costmap_2d::InflationLayer"}
+# - {name: social_layer, type: "social_navigation_layers::ProxemicLayer"}
 
 social_layer:
   enabled: True
@@ -29,10 +30,3 @@ social_layer:
 
 static_layer:
   map_topic: /map
-
-obstacles_layer:
-  observation_sources: scan
-  scan: {sensor_frame: laser, data_type: LaserScan, topic: laser, marking: true, clearing: true, min_obstacle_height: -2.0, max_obstacle_height: 2.0, obstacle_range: 10.0, raytrace_range: 10.0, observation_persistence: 0.0}
-
-inflater_layer:
- inflation_radius: 0.1

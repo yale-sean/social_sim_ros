@@ -30,6 +30,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Joy.h>
+#include <math.h>
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/thread.hpp"
 #include "ros/console.h"
@@ -46,7 +47,7 @@ private:
   ros::NodeHandle ph_, nh_;
 
   int linear_, angular_, deadman_axis_;
-  double l_scale_, a_scale_;
+  double l_scale_, a_scale_, l_scale_expo_, a_scale_expo_;
   ros::Publisher vel_pub_;
   ros::Subscriber joy_sub_;
 
@@ -63,14 +64,18 @@ SocialSimTeleop::SocialSimTeleop():
   linear_(1),
   angular_(0),
   deadman_axis_(4),
+  a_scale_(0.9),
   l_scale_(0.3),
-  a_scale_(0.9)
+  a_scale_expo_(0.5),
+  l_scale_expo_(1.4)
 {
   ph_.param("axis_linear", linear_, linear_);
   ph_.param("axis_angular", angular_, angular_);
   ph_.param("axis_deadman", deadman_axis_, deadman_axis_);
   ph_.param("scale_angular", a_scale_, a_scale_);
+  ph_.param("scale_angular_expo", a_scale_expo_, a_scale_expo_);
   ph_.param("scale_linear", l_scale_, l_scale_);
+  ph_.param("scale_linear_expo", l_scale_expo_, l_scale_expo_);
 
   deadman_pressed_ = false;
   zero_twist_published_ = false;
