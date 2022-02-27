@@ -1,4 +1,4 @@
-# Social Sim Ros
+# Social Environment Autonomous Navigation 2.0
 
 This is the ROS project for SEAN: Social Environment for Autonomous Navigation
 
