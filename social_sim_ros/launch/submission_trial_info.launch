@@ -1,0 +1,8 @@
+<launch>
+  <arg name="datapath" />
+  <arg name="submission_id" />
+  <node name="submission_trial_info" pkg="social_sim_ros" type="submission_trial_info.py" output="screen" respawn="true">
+    <param name="datapath" type="string" value="$(arg datapath)"/>
+    <param name="submission_id" type="string" value="$(arg submission_id)"/>
+  </node>
+</launch>

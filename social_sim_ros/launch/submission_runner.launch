@@ -1,11 +1,9 @@
 <launch>
   <arg name="ip" default="0.0.0.0"/>
   <arg name="port" default="00"/>
-
-  <!-- <arg name="prefix" default="/data/submissions" /> -->
-  <!-- <arg name="condition" default="submission_name_placeholder" /> -->
-  <arg name="datapath" default="" />
+  <arg name="datapath" default="$HOME/sim_ws/data" />
   <arg name="submission_name" default="submission" />
+  <arg name="submission_id" default="submission" />
   <arg name="path"   value="(find $(arg submission_name))" />
   <arg name="dollar" value="$" />
 
@@ -14,17 +12,13 @@
     <arg name="port" value="100$(arg port)" />
   </include>
 
-  <include file="$(find social_sim_ros)/launch/kuri_move_base_global_only.launch"></include>
   <include file="$(find social_sim_ros)/launch/kuri_description.launch"></include>
-  <include file="$(find social_sim_ros)/launch/differential_drive_kuri.launch"></include>
   <node pkg="social_sim_ros" name="map_publisher" type="map_publisher.py" output="screen" />
 
-  <include file="$(find lifecycle_learning)/launch/ps3_teleop_indirect.launch" />
-
-  <!-- <include file="$(find social_sim_ros)/launch/trial_info.launch">
-    <arg name="prefix" value="$(arg prefix)"/>
-    <arg name="condition" value="$(arg condition)"/>
-  </include> -->
+  <include file="$(find social_sim_ros)/launch/submission_trial_info.launch">
+    <arg name="datapath" value="$(arg datapath)"/>
+    <arg name="submission_id" value="$(arg submission_id)"/>
+  </include>
   
   <include file="$(arg dollar)$(arg path)/launch/submission.launch"/>
 

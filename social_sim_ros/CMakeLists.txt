@@ -22,6 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+    Agent.msg
+    AgentArray.msg
     PersonEntry.msg
     PersonEntryArray.msg
     TrialInfo.msg

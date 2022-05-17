@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="social_sim_ros" name="map_publisher" type="map_publisher.py" output="screen" />
+</launch>
+

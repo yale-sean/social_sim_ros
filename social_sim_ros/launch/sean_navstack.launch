@@ -1,0 +1,27 @@
+<launch>
+
+  <arg name="scene" default="labstudy" />
+  <arg name="prefix" />
+  <arg name="port" default="10000" />
+
+  <include file="$(find social_sim_ros)/launch/sim_tcp_bridge.launch" >
+    <arg name="port" value="$(arg port)" />
+  </include>
+
+  <include file="$(find social_sim_ros)/launch/kuri_move_base.launch" />
+
+  <include file="$(find social_sim_ros)/launch/kuri_description.launch"/>
+
+  <include file="$(find social_sim_ros)/launch/map_publisher.launch" />
+
+  <include file="$(find social_sim_ros)/launch/trial_info.launch">
+    <arg name="prefix" value="$(arg prefix)"/>
+    <arg name="condition" value="$(arg scene)"/>
+  </include>
+
+  <include file="$(find social_sim_ros)/launch/depth_to_laserscan.launch"/>
+
+  <!--<node type="rviz" name="rviz" pkg="rviz" args="-d $(find social_sim_ros)/config/move.rviz" />-->
+
+</launch>
+

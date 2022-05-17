@@ -5,7 +5,7 @@ import rospy
 from ros_tcp_endpoint import TcpServer, RosPublisher, RosSubscriber, RosService, UnityService
 from rosgraph_msgs.msg import Clock
 from geometry_msgs.msg import PoseStamped, PoseArray, Twist
-from social_sim_ros.msg import SceneInfo, TrialInfo, TrialStart
+from social_sim_ros.msg import SceneInfo, TrialInfo, TrialStart, AgentArray
 from std_msgs.msg import String, Bool, Float64, Float32MultiArray, Float32
 from nav_msgs.msg import Odometry, Path
 
@@ -34,8 +34,12 @@ def main():
         # trial info
         '/social_sim/scene_info' : RosPublisher('/social_sim/scene_info', SceneInfo,queue_size=10),
         '/social_sim/metrics' : RosPublisher('/social_sim/metrics', TrialInfo, queue_size=10),
+        '/social_sim/agents' : RosPublisher('/social_sim/agents', AgentArray, queue_size=10),
         '/social_sim/agent_positions' : RosPublisher('/social_sim/agent_positions', PoseArray, queue_size=10),
         '/social_sim/group_positions' : RosPublisher('/social_sim/group_positions', PoseArray, queue_size=10),
+
+        # social sim control and status
+        '/social_sim/control/task/new': RosSubscriber('/social_sim/control/task/new', Bool, tcp_server),
 
         # implemented by InputPublisher
         '/social_sim/trigger' : RosPublisher('/social_sim/trigger', Bool, queue_size=10),
@@ -79,6 +83,10 @@ def main():
         '/robot_thirdperson_rgb/compressed' : RosPublisher('/robot_thirdperson_rgb/compressed', CompressedImage),
         '/robot_overhead_rgb/camera_info' : RosPublisher('/robot_overhead_rgb/camera_info', CameraInfo),
         '/robot_overhead_rgb/compressed': RosPublisher('/robot_overhead_rgb/compressed', CompressedImage),
+
+        # player cameras
+        '/player_firstperson_rgb/camera_info' : RosPublisher('/player_firstperson_rgb/camera_info', CameraInfo),
+        '/player_firstperson_rgb/compressed': RosPublisher('/player_firstperson_rgb/compressed', CompressedImage),
 
         '/laser_raycast' : RosPublisher('/laser_raycast', LaserScan, queue_size=10),
 

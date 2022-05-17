@@ -8,7 +8,7 @@
     <param name="axis_deadman" value="4"/>
     <param name="axis_linear" value="1"/>
     <param name="axis_angular" value="0"/>
-    <remap from="social_sim_teleop_joystick/cmd_vel" to="/mobile_base_controller/cmd_vel"/>
+    <remap from="social_sim_teleop_joystick/cmd_vel" to="/joystick_cmd_vel"/>
   </node>
 
   <node pkg="joy" type="joy_node" name="joystick"/>
