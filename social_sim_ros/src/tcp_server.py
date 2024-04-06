@@ -61,6 +61,7 @@ def main():
         '/base_link_to_thirdperson_rgb_link' : RosTFBroadcaster('thirdperson_rgb_link', 'base_link'),
         '/base_link_to_overhead_rgb_link' : RosTFBroadcaster('overhead_rgb_link', 'base_link'),
         '/base_link_to_center_depth_link' : RosTFBroadcaster('center_depth_link', 'base_link'),
+        '/base_link_to_center_depth_optical_frame' : RosTFBroadcaster('center_depth_optical_frame', 'base_link'),
         '/base_link_to_laser' : RosTFBroadcaster('laser', 'base_link'),
         '/base_link_to_front_right_wheel_link' : RosTFBroadcaster('front_right_wheel_link', 'base_link'),
         '/base_link_to_front_left_wheel_link' : RosTFBroadcaster('front_left_wheel_link', 'base_link'),

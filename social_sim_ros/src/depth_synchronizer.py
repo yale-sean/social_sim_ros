@@ -15,9 +15,11 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import CompressedImage, Image, CameraInfo, RegionOfInterest
 from cv_bridge import CvBridge, CvBridgeError
 from social_sim_ros.msg import RealDepthImage
+import time
 
 MAX_RANGE=20
 MIN_RANGE=0.1
+PUB_NORM = True
 
 def camera_info(stamp, frame_id):
     '''
@@ -66,7 +68,7 @@ def camera_info(stamp, frame_id):
 
 
 def image_callback(compressed_image):
-    frame_id='center_depth_link'
+    frame_id='center_depth_optical_frame'
     ci = camera_info(compressed_image.header.stamp, frame_id)
     arr = np.frombuffer(compressed_image.data, np.uint8)
     img = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
@@ -74,7 +76,7 @@ def image_callback(compressed_image):
     # always keep the sign positive, ignoring the last bit from the shader
     img[:,:,3] = np.bitwise_and(img[:,:,3], np.full((img.shape[0],img.shape[1]), 0x01111111, np.uint8))
     # something is wrong w/ the exponent... but this fixes it!
-    img32 = (img.view(dtype=np.single) * 1e39).astype(np.single)
+    img32 = (img.view(dtype=np.single) * 1e39).astype(np.single) - 1
     # RANGE LIMITS MUST MATCH CAMERA CLIPPING PLANES
     img32[img32 > MAX_RANGE] = np.Inf
     img32[img32 < MIN_RANGE] = np.NaN
@@ -101,10 +103,6 @@ if __name__ == '__main__':
     bridge = CvBridge()
     info_pub = rospy.Publisher('/center_depth_sync/camera_info', CameraInfo, queue_size=10)
     image_pub = rospy.Publisher('/center_depth_sync/image_raw', Image, queue_size=10)
-
-
-    #ts = message_filters.ApproximateTimeSynchronizer([image_sub, info_sub], 10, 0.5, allow_headerless=True)
-    #ts.registerCallback(callback)
 
     print("ready")
     rospy.spin()

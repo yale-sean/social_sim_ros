@@ -2,7 +2,8 @@
 
   <node name="depth_synchronizer"
       pkg="social_sim_ros"
-      type="depth_synchronizer.py"/>
+      type="depth_synchronizer.py"
+      output="screen"/>
 
   <node name="depthimage_to_laserscan"
         pkg="depthimage_to_laserscan"
